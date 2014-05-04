@@ -1,29 +1,48 @@
 import zmq
 import sys
 
-context = zmq.Context()
 
-# server 1
-sock = context.socket(zmq.REQ)
-sock.connect("tcp://172.16.86.44:5556")
+class ClientCode():
 
-# Open file
-fo = open("data1.txt", "r+")
-fo2 = open("dataA.txt", "w+")
+    def __init__(self):
 
-data = fo.read().split("\n")
+        context = zmq.Context()
 
-for i in data:
-    field = i.split(" ")
-    if len(field) > 1:
-        if str(field[1]) == 'A':
-             wf = " ".join(field)
-             wf = wf + "\n"
-             fo2.write(wf)
-        else:
-             wf = " ".join(field)
-             wf = wf + "\n"
-             sock.send("msg:%s"%wf)
-             print("sent to node 2")
-             
-             print sock.recv()
+        # connect to socket 
+        self.sock = context.socket(zmq.REQ)
+        self.sock.connect("tcp://172.16.86.44:5556")
+
+        # Open files
+        self.fo = open("../data/data1.txt", "r+")
+        self.fo2 = open("dataA.txt", "a+")
+
+    def trigger(self):
+
+        #Todo - convert this to Pub-Sub
+        self.sock.send("trig")
+        print "sent trig"
+        m = self.sock.recv()
+        print m
+        self.logic()
+
+    def logic(self):
+
+        data = self.fo.read().split("\n")
+        for i in data:
+            field = i.split(" ")
+            if len(field) > 1:
+                if str(field[1]) == 'A':
+                    wf = " ".join(field)
+                    wf = wf + "\n"
+                    self.fo2.write(wf)
+                else:
+                    wf = " ".join(field)
+                    wf = wf + "\n"
+                    self.sock.send("msg:%s"%wf)
+                    print("sent to node 2")
+                    print self.sock.recv()
+
+
+if __name__ == "__main__":
+    c = ClientCode()
+    c.trigger()
