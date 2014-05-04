@@ -1,0 +1,4 @@
+hal B 2 ads
+vak B 3 sak
+alalal B 4 malala
+asdf B 8 asdf
