@@ -1,4 +1,5 @@
 import zmq
+import client
 
 # ZeroMQ Context
 context = zmq.Context()

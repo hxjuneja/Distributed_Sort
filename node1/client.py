@@ -10,7 +10,7 @@ class ClientCode():
 
         # connect to socket 
         self.sock = context.socket(zmq.REQ)
-        self.sock.connect("tcp://172.16.86.44:5556")
+        self.sock.connect("tcp://localhost:5556")
 
         # Open files
         self.fo = open("../data/data1.txt", "r+")

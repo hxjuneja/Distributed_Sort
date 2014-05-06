@@ -9,11 +9,11 @@ class ClientCode():
 
         # connect to server
         self.sock = context.socket(zmq.REQ)
-        self.sock.connect("tcp://172.16.86.84:5555")
+        self.sock.connect("tcp://localhost:5555")
 
         # Open file
         self.fo = open("../data/data1.txt", "r+")
-        sefl.fo2 = open("dataB.txt", "a+")
+        self.fo2 = open("dataB.txt", "a+")
 
     def trigger(self):
 
