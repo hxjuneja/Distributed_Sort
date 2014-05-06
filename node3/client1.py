@@ -1,6 +1,9 @@
-import zmq
-import sys
+from os import sys, path
+sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 
+import zmq
+
+import config
 
 class ClientCode():
     
