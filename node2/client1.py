@@ -13,7 +13,7 @@ class ClientCode():
 
         # Open file
         self.fo = open("../data/data1.txt", "r+")
-        sefl.fo2 = open("dataB.txt", "a+")
+        self.fo2 = open("dataB.txt", "a+")
 
     def trigger(self):
 
@@ -24,7 +24,7 @@ class ClientCode():
 
     def logic(self):
 
-        data = fo.read().split("\n")
+        data = self.fo.read().split("\n")
 
         for i in data:
            field = i.split(" ")
@@ -32,15 +32,15 @@ class ClientCode():
                if str(field[1]) == 'B':
                    wf = " ".join(field)
                    wf = wf + "\n"
-                   fo2.write(wf)
+                   self.fo2.write(wf)
                else:
                    wf = " ".join(field)
                    wf = wf + "\n"
-                   sock.send("msg:%s"%wf)
+                   self.sock.send("msg:%s"%wf)
                    print("sent ( %s )to node 1"%wf)
-                   print sock.recv()
+                   print self.sock.recv()
 
 
 if __name__ == "__main__":
     c = ClientCode()
-    c.trigger()
+    c.logic()

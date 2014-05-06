@@ -1,5 +1,5 @@
 import zmq
-from client1 import *
+import os
 
 # ZeroMQ Context
 context = zmq.Context()
@@ -13,8 +13,8 @@ while True:
     message = message.split(":")
 
     if message[0] == "trig":
-        c = ClientCode()
-        c.trigger()
+        print("got it")
+        os.system("python client1.py")
         sock.send("started")
 
     elif message[0] == "msg":
