@@ -3,19 +3,29 @@ sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 
 import zmq
 
+import config
+
 # ZeroMQ Context
 context = zmq.Context()
 
+id = 0
+lconfig = config.config[id]
+lconfig = lconfig.itervalues().next()
+port = lconfig["port"]
+file = lconfig["file"]
+
+print file
+
 # Define the socket using the "Context"
 sock = context.socket(zmq.REP)
-sock.bind("tcp://*:5555")
+sock.bind("tcp://*:%s"%port)
 
 while True:
     message = sock.recv()
     message = message.split(":")
 
     if message[0] == "msg":
-        fo = open("dataA.txt", "a+")
+        fo = open(file, "a+")
         content = message[1]
         fo.write(content)
         sock.send("done")
