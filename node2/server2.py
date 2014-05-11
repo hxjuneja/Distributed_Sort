@@ -48,7 +48,8 @@ while True:
         counter = 0
         fo = open("../data/data1.txt", "r+") 
         data = fo.read().split("\n")
-        sorted_data = data.sort(key = lambda x: int(x.split(" ")[4]))
+        sorted_data = data
+        sorted_data.sort(key = lambda x: int(x.split(" ")[4]))
 
         #initiate the iterator
         sock.send("node is ready for sort\n--------------")
@@ -64,7 +65,7 @@ while True:
         sock.send("ok")
 
     elif message[0] == "takeOver":
-        os.system("python clint1.py -s %d"%counter)
+        os.system("python client1.py -s %d"%counter)
         sock.send("done")
 
     else:

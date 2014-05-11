@@ -4,6 +4,7 @@ sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 import zmq
 
 import config as c
+from heap import *
 
 class ClientCode():
     
@@ -59,32 +60,38 @@ class ClientCode():
                             print i["sock"].recv()
 
     def numSortLogic(self, counter=None):
-    '''
-        Main logic for n-way merge
-        
-        1. Sort locally
-        2. Extract all the keys from other nodes
-        3. Create a priority heap
-        4. Pull a lowest value and write it to the file
-        5. if the limit is over, send a message to other node to start 1 
-    '''
+        '''
+            Main logic for n-way merge
+            
+            1. Sort locally
+            2. Extract all the keys from other nodes
+            3. Create a priority heap
+            4. Pull a lowest value and write it to the file
+            5. if the limit is over, send a message to other node to start 1 
+        '''
 
         keys = []
         lc = 0
         records = []
-        limit = 3
+        limit = 6
         if counter is None:
             counter = 0
 
         # Extract key from local file
         data = self.fo.read().split("\n")
        
-        sorted_data = data.sort(key = lambda x: int(x.split(" ")[4]))
+        sorted_data = data
+        sorted_data.sort(key = lambda x: int(x.split(" ")[4]))
 
-        while lc<=limit:
+        while lc<limit:
+
+            keys = []
+
             field = sorted_data[counter].split(" ")
             records.append(sorted_data[counter])
             keys.append(field[4])
+
+            print sorted_data
 
             # Extract keys from other nodes
             for i in self.nconfig:
@@ -96,6 +103,8 @@ class ClientCode():
                     records.append(m)
                     keys.append(field[4])
             
+            print keys
+
             # create a priority heap out of keys
             heap = MinMaxHeap()
             for i in keys:
@@ -115,20 +124,24 @@ class ClientCode():
                 self.nconfig[i]["sock"].send("inc")
                 self.nconfig[i]["sock"].recv()
             
-            fo2.write(sorted_data[i])
+            self.fo2.write(m+"\n")
             lc = lc + 1
 
+
         #TODO - create handler for heap transfer
-        if lc<=limit:
+        if lc==limit:
+
             # send a message to next node to take over
-            self.nconfig[self.id+1]["sock"].send("takeOver")
-            self.nconfig[self.id+1]["sock"].recv()
-            self.nconfig[self.id]["sock"].send("slave:%s"i)
+            if self.id+1 == len(self.nconfig):
+                print "phewww!!"
+            else:
+                self.nconfig[self.id+1]["sock"].send("takeOver")
+                self.nconfig[self.id+1]["sock"].recv()
 
 
 if __name__ == "__main__":
     c = ClientCode()
     if "-s" in sys.argv:
-        c.numSortLogic(int(sys.argv[3]))
+        c.numSortLogic(int(sys.argv[2]))
     else:
         c.alfaSortLogic()

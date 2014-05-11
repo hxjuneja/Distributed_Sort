@@ -89,15 +89,17 @@ class ClientCode():
         counter = 0
         lc = 0
         records = []
-        limit = 3
+        limit = 6
 
         # Extract key from local file
         data = self.fo.read().split("\n")
-       
-        sorted_data = data.sort(key = lambda x: int(x.split(" ")[4]))
+        sorted_data = data
+        sorted_data.sort(key = lambda x: int(x.split(" ")[4]))
 
-        while lc<=limit:
+        while lc<limit:
 
+            keys = []
+            
             # Extract key from local node
             field = sorted_data[counter].split(" ")
             records.append(sorted_data[counter])
@@ -112,11 +114,12 @@ class ClientCode():
                     field = m.split(" ")
                     records.append(m)
                     keys.append(field[4])
-            
+
             # Creates a priority heap out of keys
             heap = MinMaxHeap()
             for i in keys:
                 heap.insert(i)
+
 
             # Pull the lowest value
             lowest = heap.extract_min()
@@ -125,24 +128,28 @@ class ClientCode():
             for i in range(len(keys)):
                 if keys[i] == lowest:
                     break
-            
+
             # Increment counter of node[i] and write to file
             if i == self.id:
                 counter = counter + 1
             else:
                 self.nconfig[i]["sock"].send("inc")
-                self.nconfig[i]["sock"].recv()
-            
-            fo2.write(sorted_data[i])
+                if self.nconfig[i]["sock"].recv() == "end":
+                    print "fuck fuck fuck"
+
+            self.fo2.write(m+"\n")
             lc = lc + 1
 
-        if lc>limit:
+        if lc==limit:
+
+            # Send Master(this) node to update counter and start listning 
+            self.nconfig[self.id]["sock"].send("slave:%s"%counter)
+            self.nconfig[self.id]["sock"].recv()
+
             # Send a message to next node to take over
+            print "--------------\n handling to node %d"%(self.id+1)
             self.nconfig[self.id+1]["sock"].send("takeOver")
             self.nconfig[self.id+1]["sock"].recv()
-            # Send Master(this) node to update counter and start listning 
-            self.nconfig[self.id]["sock"].send("slave:%s"%i)
-            self.nconfig[self.id]["sock"].recv()
 
 if __name__ == "__main__":
     c = ClientCode()

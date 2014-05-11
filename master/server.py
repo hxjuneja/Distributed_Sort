@@ -18,9 +18,16 @@ file = lconfig["file"]
 sock = context.socket(zmq.REP)
 sock.bind("tcp://*:%s"%port)
 
+counter = 0
+fo = open("../data/data1.txt", "r+")
+data = fo.read().split("\n")
+sorted_data = data
+sorted_data.sort(key = lambda x: int(x.split(" ")[4]))
+
 while True:
     message = sock.recv()
     message = message.split(":")
+    print message
 
     if message[0] == "msg":
         fo = open(file, "a+")
@@ -32,16 +39,17 @@ while True:
 
     #send back requested record
     elif message[0] == "keyPlease":
-        msg = sorted_data[counter]
+        if counter>len(sorted_data)-1:
+            msg = "end"
+        else:
+            msg = sorted_data[counter]
         sock.send(msg)
 
     elif message[0] == "slave":
         counter = int(message[1])
 
         #extract and sort the data
-        fo = open("../data/data1.txt", "r+")
-        data = fo.read().split("\n")
-        sorted_data = data.sort(key = lambda x: int(x.split(" ")[4]))
+        sock.send("done")
 
     #increament counter
     elif message[0] == "inc":
@@ -50,5 +58,4 @@ while True:
 
     else:
         print("Please send again!!")
-        sock.send("again")
- 
+        sock.send("again") 
