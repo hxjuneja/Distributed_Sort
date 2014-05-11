@@ -1,7 +1,7 @@
-hardik A 1 okok
-hal B 2 ads
-vak B 3 sak
-alalal B 4 malala
-sooo A 6 asdd
-boo A 7 asdf
-asdf B 8 asdf
+hardik A 1 okok 8
+hal B 2 ads 9
+vak B 3 sak 1
+alalal B 4 malala 5
+sooo A 6 asdd 11
+boo A 7 asdf 12
+asdf B 8 asdf 999

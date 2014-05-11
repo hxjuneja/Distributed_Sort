@@ -34,3 +34,21 @@ while True:
     else:
         print("Please send again!!")
         sock.send("again") 
+
+    #send back requested record
+    elif message[0] == "keyPlease":
+        msg = sorted_data[counter]
+        sock.send(msg)
+
+    else message[0] == "slave":
+        counter = int(message[1])
+
+        #extract and sort the data
+        fo = open("../data/data1.txt", "r+")
+        data = fo.read().split("\n")
+        sorted_data = data.sort(key = lambda x: int(x.split(" ")[4]))
+
+    #increament counter
+    elif message[0] == "inc":
+        counter = counter + 1
+        sock.send("ok")
