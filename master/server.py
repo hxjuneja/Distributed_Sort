@@ -19,10 +19,10 @@ sock = context.socket(zmq.REP)
 sock.bind("tcp://*:%s"%port)
 
 counter = 0
-fo = open("../data/data1.txt", "r+")
+fo = open("../data/FILE1.TXT", "r+")
 data = fo.read().split("\n")
 sorted_data = data
-sorted_data.sort(key = lambda x: int(x.split(" ")[4]))
+sorted_data.sort(key = lambda x: int(x.split(" ")[2]))
 
 while True:
     message = sock.recv()
@@ -39,7 +39,7 @@ while True:
 
     #send back requested record
     elif message[0] == "keyPlease":
-        if counter>len(sorted_data)-1:
+        if counter==len(sorted_data):
             msg = "end"
         else:
             msg = sorted_data[counter]

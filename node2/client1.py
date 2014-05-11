@@ -29,7 +29,7 @@ class ClientCode():
             self.nconfig.append(a)
 
         # Open files
-        self.fo = open("../data/data1.txt", "r+")
+        self.fo = open("../data/FILE2.TXT", "r+")
         self.fo2 = open(self.lconfig["file"], "a+")
 
 
@@ -70,17 +70,18 @@ class ClientCode():
             5. if the limit is over, send a message to other node to start 1 
         '''
 
+        limit = 1000
+
         keys = []
         lc = 0
         records = []
-        limit = 6
         if counter is None:
             counter = 0
 
         # Extract key from local file
         data = self.fo.read().split("\n")
         sorted_data = data
-        sorted_data.sort(key = lambda x: int(x.split(" ")[4]))
+        sorted_data.sort(key = lambda x: int(x.split(" ")[2]))
 
         while lc<limit:
 
@@ -100,11 +101,11 @@ class ClientCode():
                     else:
                         field = m.split(" ")
                         records.append(m)
-                        keys.append(int(field[4]))
+                        keys.append(int(field[2]))
                 else:
                     field = sorted_data[counter].split(" ")
                     records.append(sorted_data[counter])
-                    keys.append(int(field[4]))
+                    keys.append(int(field[2]))
 
             # create a priority heap out of keys
             heap = MinMaxHeap()

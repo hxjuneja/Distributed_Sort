@@ -46,10 +46,10 @@ while True:
     elif message[0] == "sortReady":
         #extract and sort the data
         counter = 0
-        fo = open("../data/data1.txt", "r+") 
+        fo = open("../data/FILE2.TXT", "r+") 
         data = fo.read().split("\n")
         sorted_data = data
-        sorted_data.sort(key = lambda x: int(x.split(" ")[4]))
+        sorted_data.sort(key = lambda x: int(x.split(" ")[2]))
 
         #initiate the iterator
         sock.send("node is ready for sort\n--------------")
