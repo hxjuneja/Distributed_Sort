@@ -128,7 +128,7 @@ class ClientCode():
 
 if __name__ == "__main__":
     c = ClientCode()
-    if "-s" in argv:
-        c.numSortLogic(int(argv[3]))
+    if "-s" in sys.argv:
+        c.numSortLogic(int(sys.argv[3]))
     else:
         c.alfaSortLogic()

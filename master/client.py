@@ -49,7 +49,7 @@ class ClientCode():
                             wf = " ".join(field)
                             wf = wf + "\n"
                             i["sock"].send("msg:%s"%wf)
-                            print "sent to node %d"%i["id"]
+                            print "sent to node %d"%(i["id"])
                             print i["sock"].recv()
 
     def trigger(self):
@@ -58,7 +58,7 @@ class ClientCode():
 
         trigMessage = "trig"
 
-        if "-s" in argv:
+        if "-s" in sys.argv:
             trigMessage = "sortReady"
 
         for i in self.nconfig:
@@ -68,25 +68,26 @@ class ClientCode():
                 m = i["sock"].recv()
                 print m
 
-        if "-s" in argv:
+        if "-s" in sys.argv:
             self.numSortLogic()
         else:
             self.alfaSortLogic()
 
 
     def numSortLogic(self):
-    '''
-        Main logic for n-way merge
-        
-        1. Sort locally
-        2. Extract all the keys from other nodes
-        3. Create a priority heap
-        4. Pull a lowest value and write it to the file
-        5. if the limit is over, send a message to other node to start 1 
-    '''    
+        '''
+            Main logic for n-way merge
+
+            1. Sort locally
+            2. Extract all the keys from other nodes
+            3. Create a priority heap
+            4. Pull a lowest value and write it to the file
+            5. if the limit is over, send a message to other node to start 1
+        '''
         
         keys = []
-        counter = 0, lc = 0
+        counter = 0
+        lc = 0
         records = []
         limit = 3
 
@@ -135,13 +136,14 @@ class ClientCode():
             fo2.write(sorted_data[i])
             lc = lc + 1
 
-        #TODO - create handler for heap transfer
         if lc>limit:
             # Send a message to next node to take over
-            self.nconfig[i]["sock"].send("takeOver")
-            self.nconfig[i]["sock"].recv()
-            self.nconfig[self.id]["sock"].send("slave:%s"i)
+            self.nconfig[self.id+1]["sock"].send("takeOver")
+            self.nconfig[self.id+1]["sock"].recv()
+            # Send Master(this) node to update counter and start listning 
+            self.nconfig[self.id]["sock"].send("slave:%s"%i)
+            self.nconfig[self.id]["sock"].recv()
 
-__name__ == "__main__":
+if __name__ == "__main__":
     c = ClientCode()
     c.trigger()

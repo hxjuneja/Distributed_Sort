@@ -14,8 +14,6 @@ lconfig = lconfig.itervalues().next()
 port = lconfig["port"]
 file = lconfig["file"]
 
-print file
-
 # Define the socket using the "Context"
 sock = context.socket(zmq.REP)
 sock.bind("tcp://*:%s"%port)
@@ -31,16 +29,13 @@ while True:
         sock.send("done")
         print "done"
         fo.close()
-    else:
-        print("Please send again!!")
-        sock.send("again") 
 
     #send back requested record
     elif message[0] == "keyPlease":
         msg = sorted_data[counter]
         sock.send(msg)
 
-    else message[0] == "slave":
+    elif message[0] == "slave":
         counter = int(message[1])
 
         #extract and sort the data
@@ -52,3 +47,8 @@ while True:
     elif message[0] == "inc":
         counter = counter + 1
         sock.send("ok")
+
+    else:
+        print("Please send again!!")
+        sock.send("again")
+ 
