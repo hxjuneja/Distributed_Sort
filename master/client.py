@@ -99,30 +99,40 @@ class ClientCode():
         while lc<limit:
 
             keys = []
-            
-            # Extract key from local node
-            field = sorted_data[counter].split(" ")
-            records.append(sorted_data[counter])
-            keys.append(field[4])
-
+            records = []
+ 
             # Extract keys from other nodes
             for i in self.nconfig:
                 if i["id"]!=self.id:
                     i["sock"].send("keyPlease")
                     print "asked for key from node %d "%i["id"]
                     m = i["sock"].recv()
-                    field = m.split(" ")
-                    records.append(m)
-                    keys.append(field[4])
+                    if m == "end":
+                        m = None
+                        records.append(None)
+                        keys.append(m)
+                    else:
+                        field = m.split(" ")
+                        records.append(m)
+                        keys.append(int(field[4]))
+                else:
+                    field = sorted_data[counter].split(" ")
+                    records.append(sorted_data[counter])
+                    keys.append(int(field[4]))
 
             # Creates a priority heap out of keys
             heap = MinMaxHeap()
             for i in keys:
-                heap.insert(i)
+                if i == None:
+                    heap.insert(i)
+                else:
+                    heap.insert(i)
 
 
             # Pull the lowest value
-            lowest = heap.extract_min()
+            lowest = None
+            while lowest is None:
+                lowest = heap.extract_min()
 
             # Find node no (i) using lowest value
             for i in range(len(keys)):
@@ -134,8 +144,9 @@ class ClientCode():
                 counter = counter + 1
             else:
                 self.nconfig[i]["sock"].send("inc")
-                if self.nconfig[i]["sock"].recv() == "end":
-                    print "fuck fuck fuck"
+                self.nconfig[i]["sock"].recv() == "end"
+
+            m = records[i]
 
             self.fo2.write(m+"\n")
             lc = lc + 1

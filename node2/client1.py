@@ -79,19 +79,13 @@ class ClientCode():
 
         # Extract key from local file
         data = self.fo.read().split("\n")
-       
         sorted_data = data
         sorted_data.sort(key = lambda x: int(x.split(" ")[4]))
 
         while lc<limit:
 
             keys = []
-
-            field = sorted_data[counter].split(" ")
-            records.append(sorted_data[counter])
-            keys.append(field[4])
-
-            print sorted_data
+            records = []
 
             # Extract keys from other nodes
             for i in self.nconfig:
@@ -99,34 +93,48 @@ class ClientCode():
                     i["sock"].send("keyPlease")
                     print "asked for key from node %d "%i["id"]
                     m = i["sock"].recv()
-                    field = m.split(" ")
-                    records.append(m)
-                    keys.append(field[4])
-            
-            print keys
+                    if m == "end":
+                        m = None
+                        records.append(None)
+                        keys.append(m)
+                    else:
+                        field = m.split(" ")
+                        records.append(m)
+                        keys.append(int(field[4]))
+                else:
+                    field = sorted_data[counter].split(" ")
+                    records.append(sorted_data[counter])
+                    keys.append(int(field[4]))
 
             # create a priority heap out of keys
             heap = MinMaxHeap()
             for i in keys:
-                heap.insert(i)
+                if i == None:
+                    heap.insert(i)
+                else:
+                    heap.insert(i)
 
             # Pull the lowest value
-            lowest = heap.extract_min()
+            lowest = None
+            while lowest is None:
+                lowest = heap.extract_min()
 
+            # Find node no (i) using lowest value
             for i in range(len(keys)):
                 if keys[i] == lowest:
                     break
-            
-            # increment counter of node[i] and write to file
+
+            # Increment counter of node[i] and write to file
             if i == self.id:
                 counter = counter + 1
             else:
                 self.nconfig[i]["sock"].send("inc")
                 self.nconfig[i]["sock"].recv()
-            
+
+            m = records[i]
+
             self.fo2.write(m+"\n")
             lc = lc + 1
-
 
         #TODO - create handler for heap transfer
         if lc==limit:
@@ -135,6 +143,7 @@ class ClientCode():
             if self.id+1 == len(self.nconfig):
                 print "phewww!!"
             else:
+                print "--------------\n handling to node %d"%(self.id+1)
                 self.nconfig[self.id+1]["sock"].send("takeOver")
                 self.nconfig[self.id+1]["sock"].recv()
 
