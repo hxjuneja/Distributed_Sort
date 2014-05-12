@@ -10,7 +10,7 @@ import config
 # ZeroMQ Context
 context = zmq.Context()
 
-id = 1
+id = 2
 lconfig = config.config[id]
 lconfig = lconfig.itervalues().next()
 port = lconfig["port"]
@@ -51,6 +51,7 @@ while True:
     elif message[0] == "sortReady":
         #extract and sort the data
         counter = 0
+
         #initiate the iterator
         sock.send("node is ready for sort\n--------------")
 
@@ -65,9 +66,8 @@ while True:
         sock.send("ok")
 
     elif message[0] == "takeOver":
-
-        os.system("python client1.py -s %d"%counter)
         sock.send("done")
+        os.system("python client1.py -s %d"%counter)
 
     else:
         print("Please send again!!")
