@@ -28,7 +28,7 @@ class ClientCode():
             self.nconfig.append(a)
 
         # Open files
-        self.fo = open("../data/FILE2.TXT", "r+")
+        self.fo = open("../data/FILE3.TXT", "r+")
         self.fo2 = open(self.lconfig["file"], "a+")
 
 

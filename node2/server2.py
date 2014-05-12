@@ -56,7 +56,10 @@ while True:
 
     #send back requested record
     elif message[0] == "keyPlease":
-        msg = sorted_data[counter]
+        if counter==len(sorted_data):
+            msg = "end"
+        else:
+            msg = sorted_data[counter]
         sock.send(msg)
 
     #increament counter
@@ -64,11 +67,15 @@ while True:
         counter = counter + 1
         sock.send("ok")
 
-    elif message[0] == "takeOver":
-
-        os.system("python client1.py -s %d"%counter)
+    elif message[0] == "slave":
         sock.send("done")
+        counter = int(message[1])
 
+    elif message[0] == "takeOver":
+        sock.send("done")
+        #os.system(os.P_DETACH, "python client1.py -s %d"%counter)
+        from subprocess import Popen
+        Popen(["python", "client1.py", "-s" , str(counter)])
     else:
         print("Please send again!!")
         sock.send("again")

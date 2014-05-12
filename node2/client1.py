@@ -144,6 +144,11 @@ class ClientCode():
             if self.id+1 == len(self.nconfig):
                 print "phewww!!"
             else:
+
+                # Send Master(this) node to update counter and start listning 
+                self.nconfig[self.id]["sock"].send("slave:%s"%counter)
+                self.nconfig[self.id]["sock"].recv()
+
                 print "--------------\n handling to node %d"%(self.id+1)
                 self.nconfig[self.id+1]["sock"].send("takeOver")
                 self.nconfig[self.id+1]["sock"].recv()

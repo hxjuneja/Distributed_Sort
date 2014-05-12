@@ -23,7 +23,7 @@ sock = context.socket(zmq.REP)
 sock.bind("tcp://*:%s"%port)
 print("binding to port %s"%port)
 
-fo = open("../data/FILE2.TXT", "r+") 
+fo = open("../data/FILE3.TXT", "r+") 
 data = fo.read().split("\n")
 sorted_data = data
 sorted_data.sort(key = lambda x: int(x.split(" ")[2]))
@@ -60,14 +60,15 @@ while True:
         msg = sorted_data[counter]
         sock.send(msg)
 
+    elif message[0] == "takeOver":
+        sock.send("done")
+        #os.system(os.P_DETACH, "python client1.py -s %d"%counter)
+        from subprocess import Popen
+        Popen(["python", "client1.py", "-s" , str(counter)])
     #increament counter
     elif message[0] == "inc":
         counter = counter + 1
         sock.send("ok")
-
-    elif message[0] == "takeOver":
-        sock.send("done")
-        os.system("python client1.py -s %d"%counter)
 
     else:
         print("Please send again!!")
